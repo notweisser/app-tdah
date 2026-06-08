@@ -1,0 +1,548 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --cream:#F5F2ED;--cream-dark:#EDE9E2;--white:#FFFFFF;
+  --ink:#1C1917;--ink-light:#57534E;--ink-ghost:#A8A29E;--border:#E7E3DC;
+  --work:#3B6FE8;--work-soft:#EEF3FD;
+  --study:#2E9E6B;--study-soft:#E8F7F1;
+  --personal:#F07D3A;--personal-soft:#FEF0E7;
+  --health:#8B5CF6;--health-soft:#F3EFFE;
+  --finance:#0DA5A5;--finance-soft:#E6F7F7;
+  --r:20px;
+}
+body{font-family:'DM Sans',sans-serif;background:#E8E4DD;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 16px 56px;gap:20px}
+
+/* PHONE */
+.phone{width:320px;background:var(--cream);border-radius:40px;box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 24px 64px rgba(28,25,23,.18),0 4px 16px rgba(28,25,23,.08);overflow:hidden;flex-shrink:0;position:relative}
+.notch{height:44px;background:var(--cream);display:flex;align-items:center;justify-content:space-between;padding:0 24px;font-size:11px;font-weight:600;color:var(--ink-ghost);position:relative}
+.notch-cam{width:90px;height:26px;background:var(--ink);border-radius:20px;position:absolute;left:50%;transform:translateX(-50%);top:9px}
+
+/* SCREENS */
+.screen{display:none;flex-direction:column;min-height:620px}
+.screen.active{display:flex}
+
+/* ① SPLASH */
+#s-splash{background:var(--ink);align-items:center;justify-content:center;gap:16px;min-height:620px}
+.splash-ring{width:88px;height:88px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;animation:breathe 3s ease-in-out infinite}
+@keyframes breathe{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.06)}50%{box-shadow:0 0 0 16px rgba(255,255,255,0)}}
+.splash-inner{width:60px;height:60px;border-radius:50%;background:var(--white);display:flex;align-items:center;justify-content:center}
+.splash-dot{width:18px;height:18px;border-radius:50%;background:var(--ink)}
+.splash-name{font-family:'DM Serif Display',serif;font-size:28px;color:var(--white);letter-spacing:-.01em}
+.splash-sub{font-size:12px;color:rgba(255,255,255,.4);letter-spacing:.04em}
+
+/* ② ONBOARDING */
+#s-onboard{background:var(--white);padding:0;min-height:620px;justify-content:space-between}
+.onboard-top{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px 24px;gap:20px}
+.onboard-visual{width:180px;height:180px;background:var(--cream);border-radius:28px;display:flex;align-items:center;justify-content:center}
+.onboard-card-demo{background:var(--white);border-radius:14px;padding:14px 16px;width:140px;box-shadow:0 4px 20px rgba(28,25,23,.10)}
+.ocd-cat{width:8px;height:8px;border-radius:50%;background:var(--work);margin-bottom:8px}
+.ocd-title{font-size:11px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.ocd-step{font-size:9px;color:var(--ink-ghost)}
+.ocd-btn{margin-top:10px;background:var(--work);border-radius:8px;height:22px;display:flex;align-items:center;justify-content:center}
+.ocd-btn span{font-size:9px;color:#fff;font-weight:600}
+.onboard-dots{display:flex;gap:6px}
+.onboard-dot{width:6px;height:6px;border-radius:50%;background:var(--border)}
+.onboard-dot.on{background:var(--ink);width:20px;border-radius:4px}
+.onboard-title{font-family:'DM Serif Display',serif;font-size:22px;color:var(--ink);text-align:center;line-height:1.3}
+.onboard-body{font-size:13px;color:var(--ink-light);text-align:center;line-height:1.7}
+.onboard-bottom{padding:20px 24px 36px;display:flex;flex-direction:column;gap:10px}
+
+/* ③ MOOD */
+#s-mood{background:var(--cream);align-items:center;padding:16px 20px 0;min-height:620px}
+.mood-header{text-align:center;margin-bottom:18px;width:100%}
+.mood-sub-lbl{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-ghost);margin-bottom:5px}
+.mood-title{font-family:'DM Serif Display',serif;font-size:22px;color:var(--ink);line-height:1.3}
+.mood-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;margin-bottom:12px}
+.mood-item{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:transform .2s}
+.mood-item:active{transform:scale(.9)}
+.mood-blob-wrap{width:74px;height:74px;display:flex;align-items:center;justify-content:center;transition:transform .25s,filter .25s;border-radius:50%}
+.mood-item.selected .mood-blob-wrap{transform:scale(1.1);filter:drop-shadow(0 4px 10px var(--glow,rgba(0,0,0,.2)))}
+.mood-lbl{font-size:11px;font-weight:500;color:var(--ink-ghost);transition:color .2s}
+.mood-item.selected .mood-lbl{color:var(--ink);font-weight:600}
+.mood-feedback{font-size:12px;color:var(--ink-light);text-align:center;min-height:18px;margin-bottom:10px;font-style:italic;opacity:0;transition:opacity .3s}
+.mood-feedback.show{opacity:1}
+.mood-btn-wrap{width:100%;padding:0 0 28px}
+.mood-btn{width:100%;height:48px;border-radius:14px;background:var(--ink);color:var(--white);border:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;opacity:0;transform:translateY(6px);transition:opacity .3s,transform .3s,background .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.mood-btn.visible{opacity:1;transform:translateY(0)}
+
+/* ④ HOME */
+#s-home{background:var(--cream);min-height:620px}
+.home-header{padding:20px 24px 14px}
+.home-greeting{font-size:12px;color:var(--ink-ghost);font-weight:500;margin-bottom:2px}
+.home-title{font-family:'DM Serif Display',serif;font-size:26px;color:var(--ink);line-height:1.2}
+.home-date{font-size:11px;color:var(--ink-ghost);margin-top:4px}
+.day-strip{display:flex;gap:6px;padding:0 24px 14px;overflow-x:auto;scrollbar-width:none}
+.day-strip::-webkit-scrollbar{display:none}
+.day-chip{flex-shrink:0;height:30px;padding:0 14px;border-radius:20px;font-size:12px;font-weight:600;color:var(--ink-ghost);background:transparent;border:1px solid var(--border);display:flex;align-items:center}
+.day-chip.active{background:var(--ink);color:var(--white);border-color:var(--ink)}
+.task-scroll{flex:1;overflow-y:auto;padding:0 16px;display:flex;flex-direction:column;gap:10px;scrollbar-width:none}
+.task-scroll::-webkit-scrollbar{display:none}
+.tcard{background:var(--white);border-radius:var(--r);padding:16px;border:1px solid var(--border)}
+.tcard-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.cat-pill{height:20px;padding:0 8px;border-radius:20px;font-size:10px;font-weight:600;display:flex;align-items:center;gap:4px}
+.cat-dot{width:6px;height:6px;border-radius:50%}
+.tcard-time{margin-left:auto;font-size:11px;color:var(--ink-ghost);font-weight:600}
+.tcard-name{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:5px;line-height:1.4}
+.tcard-step{font-size:11px;color:var(--ink-ghost);margin-bottom:12px}
+.tcard-step::before{content:'▶ ';font-size:8px}
+.tcard-actions{display:flex;gap:8px}
+.btn-pri{flex:1;height:36px;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer}
+.btn-sec{height:36px;padding:0 12px;border-radius:10px;border:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--ink-light);cursor:pointer}
+
+/* ⑤ VOZ */
+#s-voice{background:var(--ink);align-items:center;justify-content:center;min-height:620px;padding:40px 24px;gap:0}
+.voice-close{position:absolute;top:52px;right:20px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.5);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.voice-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:32px}
+.voice-orb-wrap{position:relative;width:140px;height:140px;display:flex;align-items:center;justify-content:center;margin-bottom:32px}
+.orb-ring{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(255,255,255,.08);animation:orb-pulse 2s ease-in-out infinite}
+.orb-ring:nth-child(2){inset:-12px;animation-delay:.4s;border-color:rgba(255,255,255,.05)}
+.orb-ring:nth-child(3){inset:-24px;animation-delay:.8s;border-color:rgba(255,255,255,.03)}
+@keyframes orb-pulse{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.04);opacity:.4}}
+.orb-core{width:88px;height:88px;border-radius:50%;background:linear-gradient(145deg,#3B3B3B,#2A2A2A);display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.12);position:relative;z-index:1}
+.orb-mic{font-size:28px}
+.voice-transcript-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 20px;width:100%;margin-bottom:16px;min-height:56px;display:flex;align-items:center;justify-content:center}
+.voice-text{font-size:13px;color:rgba(255,255,255,.7);text-align:center;line-height:1.6;font-style:italic}
+.voice-confirm{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:16px 20px;width:100%;margin-bottom:16px}
+.vc-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:8px}
+.vc-task{font-size:14px;font-weight:600;color:var(--white);margin-bottom:4px}
+.vc-when{font-size:12px;color:rgba(255,255,255,.4)}
+.voice-btns{display:flex;gap:8px;width:100%}
+.btn-ghost-white{flex:1;height:44px;border-radius:12px;background:rgba(255,255,255,.08);border:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:rgba(255,255,255,.6);cursor:pointer}
+.btn-white{flex:1;height:44px;border-radius:12px;background:var(--white);border:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer}
+.voice-hints{margin-top:20px;text-align:center}
+.voice-hints p{font-size:11px;color:rgba(255,255,255,.2);line-height:2}
+
+/* ⑥ CELEBRATE */
+#s-celebrate{background:var(--white);align-items:center;justify-content:center;min-height:620px;padding:40px 28px;gap:20px;text-align:center;position:relative;overflow:hidden}
+.confetti-bg{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.conf{position:absolute;border-radius:2px;animation:conf-fall linear infinite}
+@keyframes conf-fall{0%{transform:translateY(-20px) rotate(0deg);opacity:.7}100%{transform:translateY(700px) rotate(540deg);opacity:0}}
+.celebrate-ring{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,#FFE4A0,#F07D3A);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(240,125,58,.25);position:relative;z-index:1}
+.celebrate-emoji{font-size:40px}
+.celebrate-title{font-family:'DM Serif Display',serif;font-size:28px;color:var(--ink);position:relative;z-index:1}
+.celebrate-sub{font-size:13px;color:var(--ink-light);line-height:1.7;position:relative;z-index:1;max-width:240px}
+.celebrate-task{background:var(--cream);border-radius:14px;padding:14px 20px;width:100%;position:relative;z-index:1}
+.ct-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-ghost);margin-bottom:4px}
+.ct-name{font-size:14px;font-weight:600;color:var(--ink)}
+.celebrate-actions{display:flex;flex-direction:column;gap:8px;width:100%;position:relative;z-index:1}
+
+/* ⑦ PENDING */
+#s-pending{background:var(--cream);min-height:620px}
+.pending-header{padding:20px 24px 14px}
+.pend-back{font-size:12px;font-weight:600;color:var(--ink-ghost);margin-bottom:8px;display:flex;align-items:center;gap:4px}
+.pending-title{font-family:'DM Serif Display',serif;font-size:22px;color:var(--ink)}
+.pend-scroll{flex:1;padding:0 16px;display:flex;flex-direction:column;gap:6px;overflow-y:auto;scrollbar-width:none}
+.pend-scroll::-webkit-scrollbar{display:none}
+.pend-group-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-ghost);padding:8px 4px 2px}
+.pend-item{background:var(--white);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;border:1px solid var(--border)}
+.pend-line{width:3px;height:32px;border-radius:2px;flex-shrink:0}
+.pend-info{flex:1}
+.pend-name{font-size:13px;font-weight:600;color:var(--ink)}
+.pend-time{font-size:11px;color:var(--ink-ghost);margin-top:1px}
+.pend-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px}
+
+/* BOTTOM NAV */
+.bottom-nav{height:68px;background:var(--white);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding:0 8px 6px;flex-shrink:0}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;padding:8px 0;border-radius:12px}
+.nav-icon{font-size:18px;opacity:.4}
+.nav-lbl{font-size:10px;font-weight:600;color:var(--ink-ghost)}
+.nav-item.active .nav-icon{opacity:1}
+.nav-item.active .nav-lbl{color:var(--ink)}
+.nav-mic{width:50px;height:50px;border-radius:50%;background:var(--ink);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;margin-top:-14px;box-shadow:0 4px 16px rgba(28,25,23,.2);flex-shrink:0}
+.nav-mic span{font-size:20px}
+
+/* SHARED */
+.btn-full{width:100%;height:48px;border-radius:14px;border:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.btn-ink{background:var(--ink);color:var(--white)}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--ink-light)}
+
+/* FLOW NAV */
+.flow-nav{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;max-width:680px;width:100%}
+.fn-btn{height:30px;padding:0 12px;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;background:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.4);color:#6B6058;cursor:pointer;white-space:nowrap;transition:all .15s;backdrop-filter:blur(4px)}
+.fn-btn.active,.fn-btn:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+.page-ind{font-size:11px;font-weight:500;color:#8A7F72;letter-spacing:.04em;text-align:center}
+
+/* DESIGN SYSTEM */
+.ds-wrap{max-width:320px;width:100%;display:flex;flex-direction:column;gap:10px}
+.ds-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8A7F72;text-align:center}
+.ds-colors{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.ds-swatch{text-align:center}
+.ds-sq{height:36px;border-radius:8px;margin-bottom:4px}
+.ds-sl{font-size:10px;font-weight:600;color:#6B6058}
+.ds-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ds-box{border-radius:10px;padding:12px 14px}
+.ds-blab{font-size:10px;font-weight:600;margin-bottom:2px}
+.ds-bval{font-size:12px;font-weight:600}
+.ds-typo{background:var(--white);border-radius:10px;padding:14px 16px;border:1px solid var(--border)}
+.ds-typo-head{font-family:'DM Serif Display',serif;font-size:20px;color:var(--ink)}
+.ds-typo-body{font-size:12px;color:var(--ink-light);margin-top:3px}
+</style>
+</head>
+<body>
+
+<div class="flow-nav">
+  <button class="fn-btn active" onclick="go('splash',0,this)">① Splash</button>
+  <button class="fn-btn" onclick="go('onboard',1,this)">② Onboarding</button>
+  <button class="fn-btn" onclick="go('mood',2,this)">③ Estado ánimo</button>
+  <button class="fn-btn" onclick="go('home',3,this)">④ Home</button>
+  <button class="fn-btn" onclick="go('voice',4,this)">⑤ Voz</button>
+  <button class="fn-btn" onclick="go('celebrate',5,this)">⑥ Completar</button>
+  <button class="fn-btn" onclick="go('pending',6,this)">⑦ Pendientes</button>
+</div>
+
+<div class="page-ind" id="page-ind">① Splash · 1 de 7</div>
+
+<div class="phone">
+  <div class="notch">
+    <span>9:41</span>
+    <div class="notch-cam"></div>
+    <span>●●●</span>
+  </div>
+
+  <!-- ① SPLASH -->
+  <div class="screen active" id="s-splash">
+    <div class="splash-ring"><div class="splash-inner"><div class="splash-dot"></div></div></div>
+    <div class="splash-name">foco.</div>
+    <div class="splash-sub">una tarea a la vez</div>
+  </div>
+
+  <!-- ② ONBOARDING -->
+  <div class="screen" id="s-onboard">
+    <div class="onboard-top">
+      <div class="onboard-visual">
+        <div class="onboard-card-demo">
+          <div class="ocd-cat"></div>
+          <div class="ocd-title">Enviar propuesta</div>
+          <div class="ocd-step">▶ Abrir el documento</div>
+          <div class="ocd-btn"><span>Empezar ahora</span></div>
+        </div>
+      </div>
+      <div class="onboard-dots">
+        <div class="onboard-dot on"></div>
+        <div class="onboard-dot"></div>
+        <div class="onboard-dot"></div>
+      </div>
+      <div class="onboard-title">Una tarea.<br>Un primer paso.</div>
+      <div class="onboard-body">Foco no te muestra tu lista interminable. Solo lo que toca ahora, con la primera acción ya resuelta.</div>
+    </div>
+    <div class="onboard-bottom">
+      <button class="btn-full btn-ink">Comenzar →</button>
+      <button class="btn-full btn-outline">Ya tengo cuenta</button>
+    </div>
+  </div>
+
+  <!-- ③ MOOD -->
+  <div class="screen" id="s-mood">
+    <div class="mood-header">
+      <div class="mood-sub-lbl">Buenos días</div>
+      <div class="mood-title">¿Cómo llegaste<br>hoy?</div>
+    </div>
+    <div class="mood-grid">
+
+      <div class="mood-item" data-mood="feliz" data-msg="¡Qué buena energía! Vamos con todo." style="--glow:rgba(245,200,66,.5)" onclick="pickMood(this)">
+        <div class="mood-blob-wrap">
+          <svg width="74" height="74" viewBox="0 0 76 76" fill="none">
+            <ellipse cx="38" cy="40" rx="30" ry="28" fill="#F5C842"/>
+            <ellipse cx="30" cy="38" rx="4" ry="4.5" fill="#1C1917"/>
+            <ellipse cx="46" cy="38" rx="4" ry="4.5" fill="#1C1917"/>
+            <ellipse cx="31.5" cy="36.5" rx="1.5" ry="1.5" fill="white"/>
+            <ellipse cx="47.5" cy="36.5" rx="1.5" ry="1.5" fill="white"/>
+            <path d="M28 47 Q38 56 48 47" stroke="#1C1917" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <path d="M28 47 Q38 54 48 47" fill="#F08080" opacity=".3"/>
+            <line x1="32" y1="18" x2="32" y2="12" stroke="#F5C842" stroke-width="2" stroke-linecap="round" opacity=".6"/>
+            <line x1="44" y1="18" x2="44" y2="12" stroke="#F5C842" stroke-width="2" stroke-linecap="round" opacity=".6"/>
+            <line x1="24" y1="21" x2="20" y2="16" stroke="#F5C842" stroke-width="2" stroke-linecap="round" opacity=".6"/>
+            <line x1="52" y1="21" x2="56" y2="16" stroke="#F5C842" stroke-width="2" stroke-linecap="round" opacity=".6"/>
+          </svg>
+        </div>
+        <div class="mood-lbl">feliz</div>
+      </div>
+
+      <div class="mood-item" data-mood="tranquilo" data-msg="Bien. Calma es el mejor estado para empezar." style="--glow:rgba(126,200,164,.5)" onclick="pickMood(this)">
+        <div class="mood-blob-wrap">
+          <svg width="74" height="74" viewBox="0 0 76 76" fill="none">
+            <path d="M38 10 C52 10 66 22 66 38 C66 54 54 66 38 66 C22 66 10 54 10 38 C10 22 24 10 38 10Z" fill="#7EC8A4"/>
+            <ellipse cx="30" cy="38" rx="4" ry="3" fill="#1C1917"/>
+            <ellipse cx="46" cy="38" rx="4" ry="3" fill="#1C1917"/>
+            <line x1="26" y1="35" x2="34" y2="35" stroke="#1C1917" stroke-width="2" stroke-linecap="round"/>
+            <line x1="42" y1="35" x2="50" y2="35" stroke="#1C1917" stroke-width="2" stroke-linecap="round"/>
+            <ellipse cx="31" cy="37" rx="1.2" ry="1" fill="white"/>
+            <ellipse cx="47" cy="37" rx="1.2" ry="1" fill="white"/>
+            <path d="M30 46 Q38 52 46 46" stroke="#1C1917" stroke-width="2" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+        <div class="mood-lbl">tranquilo</div>
+      </div>
+
+      <div class="mood-item" data-mood="ansioso" data-msg="Okay. Empezamos con algo pequeño." style="--glow:rgba(182,143,212,.5)" onclick="pickMood(this)">
+        <div class="mood-blob-wrap">
+          <svg width="74" height="74" viewBox="0 0 76 76" fill="none">
+            <path d="M38 8 C55 8 68 20 68 36 C68 50 58 68 38 68 C18 68 8 52 8 36 C8 20 21 8 38 8Z" fill="#B68FD4"/>
+            <ellipse cx="29" cy="36" rx="4.5" ry="5" fill="#1C1917"/>
+            <ellipse cx="47" cy="36" rx="4.5" ry="5" fill="#1C1917"/>
+            <ellipse cx="30.5" cy="34.5" rx="1.5" ry="1.5" fill="white"/>
+            <ellipse cx="48.5" cy="34.5" rx="1.5" ry="1.5" fill="white"/>
+            <path d="M25 29 Q29 26 33 29" stroke="#1C1917" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <path d="M43 29 Q47 26 51 29" stroke="#1C1917" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <path d="M28 49 Q32 46 36 49 Q40 52 44 49 Q47 46 49 49" stroke="#1C1917" stroke-width="2" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+        <div class="mood-lbl">ansioso</div>
+      </div>
+
+      <div class="mood-item" data-mood="cansado" data-msg="Sin problema. Tareas cortas primero." style="--glow:rgba(147,187,223,.5)" onclick="pickMood(this)">
+        <div class="mood-blob-wrap">
+          <svg width="74" height="74" viewBox="0 0 76 76" fill="none">
+            <path d="M38 12 C50 10 66 22 65 38 C64 54 52 66 38 67 C24 68 10 56 10 40 C10 24 26 14 38 12Z" fill="#93BBDF"/>
+            <ellipse cx="29" cy="38" rx="5" ry="2.5" fill="#1C1917"/>
+            <ellipse cx="47" cy="38" rx="5" ry="2.5" fill="#1C1917"/>
+            <path d="M24 35 Q29 32 34 35" stroke="#1C1917" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <path d="M42 35 Q47 32 52 35" stroke="#1C1917" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <line x1="29" y1="50" x2="47" y2="50" stroke="#1C1917" stroke-width="2" stroke-linecap="round"/>
+            <text x="52" y="26" font-size="9" fill="#1C1917" opacity=".45" font-family="serif">z</text>
+            <text x="56" y="19" font-size="7" fill="#1C1917" opacity=".25" font-family="serif">z</text>
+          </svg>
+        </div>
+        <div class="mood-lbl">cansado</div>
+      </div>
+
+      <div class="mood-item" data-mood="frustrado" data-msg="Válido. Solo una cosa hoy, ¿va?" style="--glow:rgba(232,125,90,.5)" onclick="pickMood(this)">
+        <div class="mood-blob-wrap">
+          <svg width="74" height="74" viewBox="0 0 76 76" fill="none">
+            <path d="M38 9 C54 7 67 21 67 38 C67 55 55 67 38 67 C21 67 9 55 9 38 C9 21 22 11 38 9Z" fill="#E87D5A"/>
+            <ellipse cx="29" cy="39" rx="4.5" ry="5" fill="#1C1917"/>
+            <ellipse cx="47" cy="39" rx="4.5" ry="5" fill="#1C1917"/>
+            <ellipse cx="30.5" cy="37" rx="1.5" ry="1.5" fill="white"/>
+            <ellipse cx="48.5" cy="37" rx="1.5" ry="1.5" fill="white"/>
+            <line x1="24" y1="28" x2="34" y2="33" stroke="#1C1917" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="42" y1="33" x2="52" y2="28" stroke="#1C1917" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M29 52 Q38 45 47 52" stroke="#1C1917" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+        <div class="mood-lbl">frustrado</div>
+      </div>
+
+      <div class="mood-item" data-mood="disperso" data-msg="Normal. La app te ayuda a aterrizar." style="--glow:rgba(96,201,201,.5)" onclick="pickMood(this)">
+        <div class="mood-blob-wrap">
+          <svg width="74" height="74" viewBox="0 0 76 76" fill="none">
+            <path d="M40 9 C58 9 68 24 66 40 C64 56 50 68 36 67 C22 66 8 54 9 38 C10 22 22 9 40 9Z" fill="#60C9C9"/>
+            <ellipse cx="28" cy="36" rx="4" ry="4.5" fill="#1C1917"/>
+            <ellipse cx="47" cy="37" rx="4" ry="4.5" fill="#1C1917"/>
+            <ellipse cx="26.5" cy="34.5" rx="1.5" ry="1.5" fill="white"/>
+            <ellipse cx="49" cy="35.5" rx="1.5" ry="1.5" fill="white"/>
+            <path d="M27 49 Q31 53 36 49 Q40 45 44 49 Q47 53 50 49" stroke="#1C1917" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <text x="54" y="24" font-size="10" fill="#1C1917" opacity=".35">✦</text>
+            <text x="13" y="22" font-size="8" fill="#1C1917" opacity=".25">✦</text>
+          </svg>
+        </div>
+        <div class="mood-lbl">disperso</div>
+      </div>
+
+    </div>
+    <div class="mood-feedback" id="mood-fb"></div>
+    <div class="mood-btn-wrap">
+      <button class="mood-btn" id="mood-btn" onclick="go('home',3,document.querySelectorAll('.fn-btn')[3])">
+        <span id="mood-btn-txt">Empezar el día</span><span>→</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ④ HOME -->
+  <div class="screen" id="s-home">
+    <div class="home-header">
+      <div class="home-greeting">Buenos días</div>
+      <div class="home-title">Tu foco<br>de hoy</div>
+      <div class="home-date">Lunes 7 de junio</div>
+    </div>
+    <div class="day-strip">
+      <div class="day-chip">Ayer</div>
+      <div class="day-chip active">Hoy</div>
+      <div class="day-chip">Mañana</div>
+      <div class="day-chip">Pasado</div>
+    </div>
+    <div class="task-scroll">
+      <div class="tcard">
+        <div class="tcard-top">
+          <div class="cat-pill" style="background:var(--work-soft);color:var(--work)"><div class="cat-dot" style="background:var(--work)"></div>Trabajo</div>
+          <div class="tcard-time">10:00</div>
+        </div>
+        <div class="tcard-name">Revisar propuesta de diseño</div>
+        <div class="tcard-step">Abrir el doc en Drive</div>
+        <div class="tcard-actions">
+          <button class="btn-pri" style="background:var(--work);color:#fff">Empezar</button>
+          <button class="btn-sec">+30 min</button>
+        </div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-top">
+          <div class="cat-pill" style="background:var(--personal-soft);color:var(--personal)"><div class="cat-dot" style="background:var(--personal)"></div>Personal</div>
+          <div class="tcard-time">13:00</div>
+        </div>
+        <div class="tcard-name">Llamar al colegio</div>
+        <div class="tcard-step">Buscar el número en contactos</div>
+        <div class="tcard-actions">
+          <button class="btn-pri" style="background:var(--personal);color:#fff">Empezar</button>
+          <button class="btn-sec">+30 min</button>
+        </div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-top">
+          <div class="cat-pill" style="background:var(--health-soft);color:var(--health)"><div class="cat-dot" style="background:var(--health)"></div>Salud</div>
+          <div class="tcard-time">18:00</div>
+        </div>
+        <div class="tcard-name">Pedir hora al médico</div>
+        <div class="tcard-step">Entrar al portal de salud</div>
+        <div class="tcard-actions">
+          <button class="btn-pri" style="background:var(--health);color:#fff">Empezar</button>
+          <button class="btn-sec">+30 min</button>
+        </div>
+      </div>
+      <div style="height:16px"></div>
+    </div>
+    <div class="bottom-nav">
+      <button class="nav-item active"><span class="nav-icon">○</span><span class="nav-lbl">Hoy</span></button>
+      <button class="nav-mic" onclick="go('voice',4,document.querySelectorAll('.fn-btn')[4])"><span>🎙️</span></button>
+      <button class="nav-item"><span class="nav-icon">≡</span><span class="nav-lbl">Pendientes</span></button>
+    </div>
+  </div>
+
+  <!-- ⑤ VOZ -->
+  <div class="screen" id="s-voice">
+    <button class="voice-close">✕</button>
+    <div class="voice-label">Escuchando</div>
+    <div class="voice-orb-wrap">
+      <div class="orb-ring"></div><div class="orb-ring"></div><div class="orb-ring"></div>
+      <div class="orb-core"><span class="orb-mic">🎙️</span></div>
+    </div>
+    <div class="voice-transcript-box">
+      <div class="voice-text">"Recuerda llamar al médico mañana a las 11"</div>
+    </div>
+    <div class="voice-confirm">
+      <div class="vc-label">Entendí esto</div>
+      <div class="vc-task">Llamar al médico</div>
+      <div class="vc-when">Mañana · 11:00 · Primer paso: Buscar el número</div>
+    </div>
+    <div class="voice-btns">
+      <button class="btn-ghost-white">Repetir</button>
+      <button class="btn-white">✓ Confirmar</button>
+    </div>
+    <div class="voice-hints"><p>Di también:<br><em>"¿Qué tengo pendiente hoy?"</em></p></div>
+  </div>
+
+  <!-- ⑥ CELEBRACIÓN -->
+  <div class="screen" id="s-celebrate">
+    <div class="confetti-bg" id="confetti"></div>
+    <div class="celebrate-ring"><span class="celebrate-emoji">✦</span></div>
+    <div class="celebrate-title">¡Lo lograste!</div>
+    <div class="celebrate-sub">Completaste una tarea. Cada paso cuenta, aunque sea pequeño.</div>
+    <div class="celebrate-task">
+      <div class="ct-label">Completaste</div>
+      <div class="ct-name">Revisar propuesta de diseño</div>
+    </div>
+    <div class="celebrate-actions">
+      <button class="btn-full btn-ink" onclick="go('home',3,document.querySelectorAll('.fn-btn')[3])">Ver mis tareas →</button>
+      <button class="btn-full btn-outline">Agregar otra tarea</button>
+    </div>
+  </div>
+
+  <!-- ⑦ PENDIENTES -->
+  <div class="screen" id="s-pending">
+    <div class="pending-header">
+      <div class="pend-back">← Volver</div>
+      <div class="pending-title">Todo pendiente</div>
+    </div>
+    <div class="pend-scroll">
+      <div class="pend-group-label">Hoy</div>
+      <div class="pend-item"><div class="pend-line" style="background:var(--work)"></div><div class="pend-info"><div class="pend-name">Revisar propuesta</div><div class="pend-time">10:00 · Trabajo</div></div><div class="pend-badge" style="background:var(--work-soft);color:var(--work)">Hoy</div></div>
+      <div class="pend-item"><div class="pend-line" style="background:var(--personal)"></div><div class="pend-info"><div class="pend-name">Llamar al colegio</div><div class="pend-time">13:00 · Personal</div></div><div class="pend-badge" style="background:var(--personal-soft);color:var(--personal)">Hoy</div></div>
+      <div class="pend-group-label">Mañana</div>
+      <div class="pend-item"><div class="pend-line" style="background:var(--health)"></div><div class="pend-info"><div class="pend-name">Llamar al médico</div><div class="pend-time">11:00 · Salud</div></div><div class="pend-badge" style="background:var(--health-soft);color:var(--health)">Mañana</div></div>
+      <div class="pend-item"><div class="pend-line" style="background:var(--study)"></div><div class="pend-info"><div class="pend-name">Entregar resumen curso</div><div class="pend-time">16:00 · Estudio</div></div><div class="pend-badge" style="background:var(--study-soft);color:var(--study)">Mañana</div></div>
+      <div class="pend-group-label">Atrasadas</div>
+      <div class="pend-item"><div class="pend-line" style="background:#E85858"></div><div class="pend-info"><div class="pend-name">Renovar carnet</div><div class="pend-time">Ayer · Personal</div></div><div class="pend-badge" style="background:#FEF0F0;color:#E85858">Atrasada</div></div>
+      <div style="height:16px"></div>
+    </div>
+    <div class="bottom-nav">
+      <button class="nav-item"><span class="nav-icon">○</span><span class="nav-lbl">Hoy</span></button>
+      <button class="nav-mic"><span>🎙️</span></button>
+      <button class="nav-item active"><span class="nav-icon">≡</span><span class="nav-lbl">Pendientes</span></button>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+
+<!-- DESIGN SYSTEM -->
+<div class="ds-wrap">
+  <div class="ds-title">Sistema de diseño · Foco</div>
+  <div class="ds-colors">
+    <div class="ds-swatch"><div class="ds-sq" style="background:#3B6FE8;box-shadow:0 2px 8px rgba(59,111,232,.3)"></div><div class="ds-sl">Trabajo</div></div>
+    <div class="ds-swatch"><div class="ds-sq" style="background:#2E9E6B;box-shadow:0 2px 8px rgba(46,158,107,.3)"></div><div class="ds-sl">Estudio</div></div>
+    <div class="ds-swatch"><div class="ds-sq" style="background:#F07D3A;box-shadow:0 2px 8px rgba(240,125,58,.3)"></div><div class="ds-sl">Personal</div></div>
+    <div class="ds-swatch"><div class="ds-sq" style="background:#8B5CF6;box-shadow:0 2px 8px rgba(139,92,246,.3)"></div><div class="ds-sl">Salud</div></div>
+    <div class="ds-swatch"><div class="ds-sq" style="background:#0DA5A5;box-shadow:0 2px 8px rgba(13,165,165,.3)"></div><div class="ds-sl">Finanzas</div></div>
+  </div>
+  <div class="ds-row">
+    <div class="ds-box" style="background:#1C1917"><div class="ds-blab" style="color:rgba(255,255,255,.4);font-size:10px;font-weight:600">Base oscura</div><div class="ds-bval" style="color:#fff;font-size:12px">Ink #1C1917</div></div>
+    <div class="ds-box" style="background:#F5F2ED;border:1px solid #E7E3DC"><div class="ds-blab" style="color:#A8A29E;font-size:10px;font-weight:600">Fondo</div><div class="ds-bval" style="color:#1C1917;font-size:12px">Cream #F5F2ED</div></div>
+  </div>
+  <div class="ds-typo">
+    <div class="ds-typo-head">DM Serif Display</div>
+    <div class="ds-typo-body">DM Sans · cuerpo, botones y UI</div>
+  </div>
+</div>
+
+<script>
+const labels = ['① Splash','② Onboarding','③ Estado de ánimo','④ Home · Vista del día','⑤ Comando de voz','⑥ Celebración','⑦ Pendientes'];
+
+function go(id, idx, btn){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-'+id).classList.add('active');
+  document.querySelectorAll('.fn-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  document.getElementById('page-ind').textContent = labels[idx] + ' · ' + (idx+1) + ' de 7';
+}
+
+// Mood
+let moodSelected = false;
+function pickMood(el){
+  document.querySelectorAll('.mood-item').forEach(i=>i.classList.remove('selected'));
+  el.classList.add('selected');
+  const fb = document.getElementById('mood-fb');
+  fb.textContent = el.dataset.msg;
+  fb.classList.add('show');
+  const btn = document.getElementById('mood-btn');
+  btn.classList.add('visible');
+  moodSelected = true;
+}
+
+// Confetti
+const colors=['#3B6FE8','#2E9E6B','#F07D3A','#8B5CF6','#0DA5A5','#F5C842','#E87D5A'];
+const cf = document.getElementById('confetti');
+for(let i=0;i<28;i++){
+  const d=document.createElement('div');
+  d.className='conf';
+  const size = 6+Math.random()*8;
+  d.style.cssText=`
+    background:${colors[i%colors.length]};
+    width:${size}px;height:${size}px;
+    left:${Math.random()*100}%;
+    top:-20px;
+    border-radius:${Math.random()>.5?'50%':'3px'};
+    animation-delay:${(i*.12).toFixed(2)}s;
+    animation-duration:${2.5+Math.random()*2}s;
+    opacity:.6;
+  `;
+  cf.appendChild(d);
+}
+
+document.getElementById('page-ind').textContent = labels[0] + ' · 1 de 7';
+</script>
+</body>
+</html>
